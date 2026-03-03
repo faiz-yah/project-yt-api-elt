@@ -5,20 +5,24 @@ import os
 from dotenv import load_dotenv
 from datetime import date
 
-from utils import cal_time_taken
+from utils.utils import cal_time_taken
 
-load_dotenv(dotenv_path="./.env")
-API_KEY = os.getenv("API_KEY")
+from airflow.decorators import task
+from airflow.models import Variable
 
 
-CHANNEL_HANDLE = 'FaizYah'
+#load_dotenv(dotenv_path="./.env")
+
+API_KEY = Variable.get("API_KEY")
+CHANNEL_HANDLE = Variable.get("CHANNEL_HANDLE")
 maxResult = 5
 
 
-url_playlist_id = f'https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle={CHANNEL_HANDLE}&key={API_KEY}'
-
-@cal_time_taken
-def get_playlist_id(url):
+#@cal_time_taken
+@task
+def get_playlist_id():
+    
+    url = f'https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle={CHANNEL_HANDLE}&key={API_KEY}'
     
     try:
         response = requests.get(url)
@@ -38,7 +42,8 @@ def get_playlist_id(url):
     except requests.exceptions.RequestException as e:
         raise e
         
-@cal_time_taken
+#@cal_time_taken
+@task
 def get_video_ids(playlistId):
     
     base_url = f"https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults={maxResult}&playlistId={playlistId}&key={API_KEY}"
@@ -120,6 +125,7 @@ def get_video_ids(playlistId):
         
 #     return video_stats_df
 
+@task
 def get_video_stats(video_ids):
     
     extracted_data = []
@@ -160,6 +166,7 @@ def get_video_stats(video_ids):
             
     return extracted_data
 
+@task
 def save_to_json(extracted_data):
     file_path = f"./data/YTData_{date.today()}.json"
     
