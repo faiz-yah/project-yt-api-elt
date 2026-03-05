@@ -26,7 +26,7 @@ with DAG(
     dag_id='produce_json',
     default_args=default_args,
     description='DAG to produce JSON file with raw data',
-    schedule='0 14 * * *',
+    schedule='0 14 * * *', # crontab. guru
     catchup=False
 ) as dag:
     
