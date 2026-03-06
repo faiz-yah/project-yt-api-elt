@@ -77,7 +77,7 @@ staging_schema = 'staging'
 core_schema = 'core'
 
 with DAG(
-    dag_id='update_db',
+    dag_id='data_quality',
     default_args=default_args,
     description='DAG to carry out data quality checks on data in DB',
     schedule='0 16 * * *', # crontab. guru
@@ -90,4 +90,4 @@ with DAG(
     
     # Define dependencies
 
-    dq_staging >> dq_core 
+     dq_staging >> dq_core 
