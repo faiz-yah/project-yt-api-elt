@@ -45,17 +45,17 @@ def staging_table():
             
             ## Staging table sync: Mirror exactly what is in the incoming JSON, no more no less
             
-            # New incoming data
-            ids_in_json = {row['video_id'] for row in YT_data}
-            
-            # Full Refresh Sync : (Existing data in the staging database) - (New incoming data) = Removed stale records
-            ids_to_delete = set(table_ids) - ids_in_json
-            
-            # If ids_to_delete not null
-            if ids_to_delete:
-                delete_rows(cur, conn, schema, ids_to_delete)
-            
-            logger.info(f"{schema} table update completed")
+        # New incoming data
+        ids_in_json = {row['video_id'] for row in YT_data}
+        
+        # Full Refresh Sync : (Existing data in the staging database) - (New incoming data) = Removed stale records
+        ids_to_delete = set(table_ids) - ids_in_json
+        
+        # If ids_to_delete not null
+        if ids_to_delete:
+            delete_rows(cur, conn, schema, ids_to_delete)
+        
+        logger.info(f"{schema} table update completed")
      
     except Exception as e:
         logger.error(f"An error occured during the update of {schema} - table: {e}")      

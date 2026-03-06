@@ -3,6 +3,7 @@ import pendulum
 from datetime import datetime, timedelta
 
 from api.video_stats import get_playlist_id, get_video_ids, get_video_stats, save_to_json
+from datawarehouse.dwh import staging_table, core_table
 
 # Define local timezone
 local_tz = pendulum.timezone("Asia/Kuala_Lumpur")
@@ -31,6 +32,7 @@ with DAG(
 ) as dag:
     
     # Define tasks
+    
     playlist_id = get_playlist_id()
     video_ids = get_video_ids(playlist_id)
     video_stats = get_video_stats(video_ids)
@@ -39,4 +41,20 @@ with DAG(
     # Define dependencies
     
     playlist_id >> video_ids >> video_stats >> save_to_json_task
+
+with DAG(
+    dag_id='update_db',
+    default_args=default_args,
+    description='DAG to process JSON file and inser data into staging and core schemas',
+    schedule='0 15 * * *', # crontab. guru
+    catchup=False
+) as dag:
+    
+    # Define tasks
+    update_staging = staging_table()
+    update_core = core_table()
+    
+    # Define dependencies
+    
+    update_staging >> update_core 
     

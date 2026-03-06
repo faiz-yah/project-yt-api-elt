@@ -25,7 +25,7 @@ def create_schema(schema):
      
     conn, cur = get_conn_cursor()
     
-    query = f'CREATA SCHEMA IF NOT EXIST {schema};'
+    query = f'CREATE SCHEMA IF NOT EXISTS {schema};'
     
     cur.execute(query)
     
@@ -79,6 +79,6 @@ def get_video_ids(cur, schema):
     
     ids = cur.fetchall()
     
-    video_ids = [row['Video_id'] for row in ids]
+    video_ids = [row['Video_ID'] for row in ids]
     
     return video_ids
