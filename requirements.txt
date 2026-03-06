@@ -1,3 +1,5 @@
 requests
 pandas
 python-dotenv
+soda-core-postgres
+pytest
